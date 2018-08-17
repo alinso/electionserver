@@ -25,6 +25,12 @@ public class CityResource {
 
   }
 
+  @RequestMapping("update")
+  public void updateCitizenById( @RequestBody String citizenJson){
+    City city  = (City) mapper.jsonToObject(citizenJson,new City());
+    cityDao.update(city);
+  }
+
 
   @GetMapping("all")
   private String getAll(){

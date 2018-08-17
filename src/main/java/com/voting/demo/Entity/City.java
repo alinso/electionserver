@@ -13,6 +13,7 @@ public class City implements Serializable {
 
   private String cityName;
 
+  @Enumerated
   private PoliticalInclination politicalInclination;
 
   public enum PoliticalInclination{
@@ -44,8 +45,13 @@ public class City implements Serializable {
     return politicalInclination;
   }
 
+
   public void setPoliticalInclination(PoliticalInclination politicalInclination) {
     this.politicalInclination = politicalInclination;
+  }
+
+  public void setPoliticalInclination(Integer politicalInclination) {
+    this.politicalInclination = PoliticalInclination.values()[politicalInclination];
   }
 
 

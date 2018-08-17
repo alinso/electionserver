@@ -69,40 +69,47 @@ class JsonCreator {
 
         methodName  =methodName.replace("İ","I");
 
-        return stringifyValue(obj,methodName);
+        return stringifyValue(obj,methodName,fieldName);
     }
 
-    private String stringifyValue(Object obj, String methodName){
+    private String stringifyValue(Object obj, String methodName,String fieldName){
         Method method;
         String value  = null;
+        Field field;
         try {
             method = obj.getClass().getDeclaredMethod(methodName);
+            field = obj.getClass().getDeclaredField(fieldName);
             Type t  = method.getReturnType();
 
             if(((Class) t).getCanonicalName().equals("java.lang.String")){
                 value = "\""+ method.invoke(obj) +"\"";
             }
 
-            if(((Class) t).getCanonicalName().equals("java.lang.Integer")){
+            else if(((Class) t).getCanonicalName().equals("java.lang.Integer")){
 
                 Integer intValue = (Integer)method.invoke(obj);
                 value  =intValue.toString();
             }
-
-            if(((Class) t).getCanonicalName().equals("java.util.Date")){
+            else if(((Class) t).getCanonicalName().equals("java.util.Date")){
 
                 SimpleDateFormat dateFormat  = new SimpleDateFormat("dd.MM.yyyy");
                 Date dateValue  = (Date)method.invoke(obj);
                 value  ="\""+ dateFormat.format(dateValue)+"\"";
             }
+             else if (field.getDeclaredAnnotations()[0].toString().equals("@javax.persistence.Enumerated(value=ORDINAL)")) {
+              Enum enumValue = (Enum)method.invoke(obj);
+                value  = String.valueOf(enumValue.ordinal());
+             }
 
 
 
 
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+          e.printStackTrace();
         }
-        return value;
+      return value;
     }
 
 
